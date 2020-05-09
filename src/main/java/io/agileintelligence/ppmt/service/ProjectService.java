@@ -1,24 +1,24 @@
 package io.agileintelligence.ppmt.service;
 
-import io.agileintelligence.ppmt.domain.Project;
+import io.agileintelligence.ppmt.domain.ProjectBO;
 
 public interface ProjectService {
 
-    Project saveProject(Project project);
+    ProjectBO saveProject(ProjectBO projectBO);
 
-    Project saveOrUpdateProject(Project project, String username);
+    ProjectBO saveOrUpdateProject(ProjectBO projectBO, String username);
 
-    Project findProjectByIdentifier(String projectId);
+    ProjectBO findProjectByIdentifier(String projectId);
 
-    Project findProjectByIdentifier(String Id, String username);
+    ProjectBO findProjectByIdentifier(String Id, String username);
 
-    Iterable<Project> findAllProjects();
+    Iterable<ProjectBO> findAllProjects();
 
-    Iterable<Project> findAllProjects(String username);
+    Iterable<ProjectBO> findAllProjects(String username);
 
     void deleteProjectByIdentifier(String projectId);
 
     void deleteProjectByIdentifier(String projectId, String username);
 
-    Project updateProject(Project project);
+    ProjectBO updateProject(ProjectBO projectBO);
 }

@@ -6,8 +6,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-public class Backlog {
+@Entity(name = "Backlog")
+public class BacklogBO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,17 +16,17 @@ public class Backlog {
     private Integer PTSequence = 0;
     private String projectIdentifier;
 
-    //OneToOne with project
+    //OneToOne with projectBO
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id", nullable = false)
     @JsonIgnore
-    private Project project;
+    private ProjectBO projectBO;
 
 
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "backlog", orphanRemoval = true)
-    private List<ProjectTask> projectTasks = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "backlogBO", orphanRemoval = true)
+    private List<ProjectTaskBO> projectTaskBOS = new ArrayList<>();
 
-    public Backlog() {
+    public BacklogBO() {
     }
 
     public Long getId() {
@@ -53,19 +53,19 @@ public class Backlog {
         this.projectIdentifier = projectIdentifier;
     }
 
-    public Project getProject() {
-        return project;
+    public ProjectBO getProjectBO() {
+        return projectBO;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProjectBO(ProjectBO projectBO) {
+        this.projectBO = projectBO;
     }
 
-    public List<ProjectTask> getProjectTasks() {
-        return projectTasks;
+    public List<ProjectTaskBO> getProjectTaskBOS() {
+        return projectTaskBOS;
     }
 
-    public void setProjectTasks(List<ProjectTask> projectTasks) {
-        this.projectTasks = projectTasks;
+    public void setProjectTaskBOS(List<ProjectTaskBO> projectTaskBOS) {
+        this.projectTaskBOS = projectTaskBOS;
     }
 }

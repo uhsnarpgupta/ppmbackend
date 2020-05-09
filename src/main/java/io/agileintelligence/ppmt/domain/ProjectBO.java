@@ -8,21 +8,21 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
-@Entity
-public class Project {
+@Entity(name = "Project")
+public class ProjectBO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Project name is required")
+    @NotBlank(message = "ProjectBO name is required")
     private String projectName;
 
-    @NotBlank(message = "Project Identifier is required")
+    @NotBlank(message = "ProjectBO Identifier is required")
     @Size(min = 4, max = 5, message = "Please use 4 to 5 characters")
     @Column(updatable = false, unique = true)
     private String projectIdentifier;
 
-    @NotBlank(message = "Project description is required")
+    @NotBlank(message = "ProjectBO description is required")
     private String description;
 
     @JsonFormat(pattern = "yyyy-mm-dd")
@@ -38,17 +38,17 @@ public class Project {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updated_At;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "projectBO")
     @JsonIgnore
-    private Backlog backlog;
+    private BacklogBO backlogBO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    private UserBO userBO;
 
     private String projectLeader;
 
-    public Project() {
+    public ProjectBO() {
     }
 
     public Long getId() {
@@ -115,20 +115,20 @@ public class Project {
         this.updated_At = updated_At;
     }
 
-    public Backlog getBacklog() {
-        return backlog;
+    public BacklogBO getBacklogBO() {
+        return backlogBO;
     }
 
-    public void setBacklog(Backlog backlog) {
-        this.backlog = backlog;
+    public void setBacklogBO(BacklogBO backlogBO) {
+        this.backlogBO = backlogBO;
     }
 
-    public User getUser() {
-        return user;
+    public UserBO getUserBO() {
+        return userBO;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserBO(UserBO userBO) {
+        this.userBO = userBO;
     }
 
     public String getProjectLeader() {

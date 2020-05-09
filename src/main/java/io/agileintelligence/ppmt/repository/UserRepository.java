@@ -1,13 +1,18 @@
 package io.agileintelligence.ppmt.repository;
 
-import io.agileintelligence.ppmt.domain.User;
+import io.agileintelligence.ppmt.domain.UserBO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<UserBO, Long> {
 
-    User findByUsername(String username);
+    UserBO findByUsername(String username);
 
-    User getById(Long id);
+    UserBO getById(Long id);
+
+    Boolean existsByUsername(String username);
+
+    Boolean existsByEmail(String email);
+
 }

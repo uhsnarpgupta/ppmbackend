@@ -1,6 +1,8 @@
 package io.agileintelligence.ppmt.validator;
 
-import io.agileintelligence.ppmt.domain.User;
+import io.agileintelligence.ppmt.domain.UserBO;
+import io.agileintelligence.ppmt.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -8,23 +10,20 @@ import org.springframework.validation.Validator;
 @Component
 public class UserValidator implements Validator {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public boolean supports(Class<?> aClass) {
-        return User.class.equals(aClass);
+        return UserBO.class.equals(aClass);
     }
 
     @Override
     public void validate(Object object, Errors errors) {
-        User user = (User) object;
+        UserBO userBO = (UserBO) object;
 
-        if (user.getPassword().length() < 6) {
-            errors.rejectValue("password", "Length", "Password must be at least 6 characters");
+        if (userBO == null) {
+            errors.rejectValue("userBO", "exists", "userBO does not exists");
         }
-
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "Match", "Passwords must match");
-
-        }
-        //confirmPassword
     }
 }

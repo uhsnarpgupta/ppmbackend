@@ -1,25 +1,22 @@
 package io.agileintelligence.ppmt.web;
 
-import io.agileintelligence.ppmt.domain.User;
-import io.agileintelligence.ppmt.payload.JWTLoginSucessReponse;
-import io.agileintelligence.ppmt.payload.LoginRequest;
-import io.agileintelligence.ppmt.security.JwtTokenProvider;
+import io.agileintelligence.ppmt.domain.UserBO;
 import io.agileintelligence.ppmt.service.MapValidationErrorService;
 import io.agileintelligence.ppmt.service.UserService;
 import io.agileintelligence.ppmt.validator.UserValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-
-import static io.agileintelligence.ppmt.security.SecurityConstants.TOKEN_PREFIX;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,40 +32,33 @@ public class UserController {
     @Autowired
     private UserValidator userValidator;
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) {
+    @GetMapping
+    public ResponseEntity<?> getUserDetails(@NotBlank @RequestParam("username") String username, BindingResult result) {
+        UserBO userBO = userService.getUserDetails(username);
+        userValidator.validate(userBO, result);
+
         ResponseEntity<?> errorMap = mapValidationErrorService.mapValidationService(result);
-        if (errorMap != null) return errorMap;
+        if (errorMap != null) {
+            return errorMap;
+        }
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = TOKEN_PREFIX + tokenProvider.generateToken(authentication);
-
-        return ResponseEntity.ok(new JWTLoginSucessReponse(true, jwt));
+        return new ResponseEntity<>(userBO, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) {
-        // Validate passwords match
-        userValidator.validate(user, result);
+    @PostMapping(path = "{userId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public void uploadUserProfileImage(@PathVariable("userId") Long userId,
+                                       @RequestParam("file") MultipartFile file){
+        LOGGER.info("File name: {} to be uploaded.", file.getName());
+        userService.uploadProfilePhoto(userId, file);
+        LOGGER.info(String.format("File name '%s' uploaded successfully.", file.getOriginalFilename()));
+    }
 
-        ResponseEntity<?> errorMap = mapValidationErrorService.mapValidationService(result);
-        if (errorMap != null) return errorMap;
-
-        User newUser = userService.saveUser(user);
-
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    @GetMapping("{userId}/image")
+    public void renderImageFromDB(@PathVariable Long userId, HttpServletResponse response) throws IOException {
+        userService.renderImageFromDB(userId, response);
     }
 }

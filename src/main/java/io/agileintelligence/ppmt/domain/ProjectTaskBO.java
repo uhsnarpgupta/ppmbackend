@@ -7,8 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
-@Entity
-public class ProjectTask {
+@Entity(name="ProjectTask")
+public class ProjectTaskBO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +27,11 @@ public class ProjectTask {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date dueDate;
 
-    //ManyToOne with Backlog
+    //ManyToOne with BacklogBO
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
-    private Backlog backlog;
+    private BacklogBO backlogBO;
 
     @Column(updatable = false)
     private String projectIdentifier;
@@ -42,7 +42,7 @@ public class ProjectTask {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date update_At;
 
-    public ProjectTask() {
+    public ProjectTaskBO() {
     }
 
     public Long getId() {
@@ -125,12 +125,12 @@ public class ProjectTask {
         this.update_At = update_At;
     }
 
-    public Backlog getBacklog() {
-        return backlog;
+    public BacklogBO getBacklogBO() {
+        return backlogBO;
     }
 
-    public void setBacklog(Backlog backlog) {
-        this.backlog = backlog;
+    public void setBacklogBO(BacklogBO backlogBO) {
+        this.backlogBO = backlogBO;
     }
 
     @PrePersist
@@ -145,7 +145,7 @@ public class ProjectTask {
 
     @Override
     public String toString() {
-        return "ProjectTask{" +
+        return "ProjectTaskBO{" +
                 "id=" + id +
                 ", projectSequence='" + projectSequence + '\'' +
                 ", summary='" + summary + '\'' +
@@ -153,7 +153,7 @@ public class ProjectTask {
                 ", status='" + status + '\'' +
                 ", priority=" + priority +
                 ", dueDate=" + dueDate +
-                ", backlog=" + backlog +
+                ", backlogBO=" + backlogBO +
                 ", projectIdentifier='" + projectIdentifier + '\'' +
                 ", create_At=" + create_At +
                 ", update_At=" + update_At +
